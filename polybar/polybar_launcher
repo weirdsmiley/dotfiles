@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+killall -q polybar
+
+while pgrep -u $UID -x polybar > /dev/null; do sleep 1; done
+
+echo "---" | tee -a /tmp/polybar_top.log /tmp/polybar_bottom.log
+polybar topbar >> /tmp/polybar_top.log 2>&1 &
+polybar bottombar >> /tmp/polybar_bottom.log 2>&1 &
+
+echo "Polybar running..."
