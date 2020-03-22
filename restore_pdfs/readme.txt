@@ -1,6 +1,6 @@
 # WHY?
-These scripts are meant to be bind with i3wm. I have personally set two key-
-bindings (inside i3_config, lines-84,84) for saving and restoring the pdfs so 
+These scripts are meant to be binded with i3wm. I have personally set two key-
+bindings (inside i3_config, lines-84,85) for saving and restoring the pdfs so 
 that after a reboot I could get back to what I was reading.
 
 # HOW?
