@@ -110,6 +110,8 @@ let NERDTreeHighlightCursorline=1
 if !exists('g:airline_symbols')
 	let g:airline_symbols = {}
 endif
+" on github if you aren't able to get the symbols then
+" copy/paste from the helptags of airline plugin
 let g:airline_left_sep = ''
 let g:airline_left_alt_sep = ''
 let g:airline_right_sep = ''
