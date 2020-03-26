@@ -21,7 +21,10 @@ set splitbelow splitright
 execute pathogen#infect()
 
 " Automatically wrap text that extends beyond the screen length.
-set nowrap
+set wrap
+set linebreak
+set breakindent
+set breakindentopt=shift:8
 
 " Syntax highlighting
 syntax on
@@ -47,6 +50,51 @@ nnoremap <leader><space> :noh<cr>
 
 " Speed up scrolling in Vim
 set ttyfast
+
+" entering special chars
+" for ä - a <BS> :
+" for ǎ - a <BS> <
+" <BS> = backspace
+" although, use <C-k>, <C-v> if not a touch typist
+"set dg
+
+" enable xterm_clipboard for outside vim copying/pasting
+" only if vim --version | grep xterm_clipboard
+" return +xterm_clipboard
+" set clipboard=unnamedplus
+" straight outta vim fandom ()
+"
+" what can be done:
+" 1. selection of a blob of text in visual mode
+" 2. going to command line mode (:)
+" 3. :'<,'>cz ....etc
+"
+" z → X11-clipboard
+" x → X11 primary selection
+" v → X11 secondary selection
+"
+" how to → ? (<C-v>u2192)
+" while in insert mode, hit <C-v> followed by `u`
+" then the unicode codepoint
+"
+command -range Cz :silent :<line1>,<line2>w !xsel -i -b
+command -range Cx :silent :<line1>,<line2>w !xsel -i -p
+command -range Cv :silent :<line1>,<line2>w !xsel -i -s
+cabbrev cv Cv
+cabbrev cz Cz
+cabbrev cx Cx
+
+command -range Pz :silent :r !xsel -o -b
+command -range Px :silent :r !xsel -o -p
+command -range Pv :silent :r !xsel -o -s
+
+cabbrev pz Pz
+cabbrev px Px
+cabbrev pv Pv
+" end
+
+" viminfo confs
+set viminfo='10,<100,:100,%,n~/.vim/.viminfo
 
 " Display options
 " set noshowmode
@@ -110,8 +158,6 @@ let NERDTreeHighlightCursorline=1
 if !exists('g:airline_symbols')
 	let g:airline_symbols = {}
 endif
-" on github if you aren't able to get the symbols then
-" copy/paste from the helptags of airline plugin
 let g:airline_left_sep = ''
 let g:airline_left_alt_sep = ''
 let g:airline_right_sep = ''
@@ -181,6 +227,10 @@ let g:rust_playpen_url = 'https://play.rust-lang.org/'
 autocmd FileType rust map<leader>l :RustRun!<cr>
 
 
+" skeletons for competitive programming
+"if getcwd() !=# getcwd()
+"	au BufNewFile *.cpp 0r ~/.vim/templates/skeleton_cp.cpp
+"endif
 
 nnoremap <leader><leader> <C-^>
 
