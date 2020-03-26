@@ -216,9 +216,21 @@ autocmd FileType rust map<leader>l :RustRun!<cr>
 
 
 " skeletons for competitive programming
-"if getcwd() !=# getcwd()
-"	au BufNewFile *.cpp 0r ~/.vim/templates/skeleton_cp.cpp
-"endif
+function! Skel(which_dir)
+	let l:curr_pwd = getcwd()
+	if curr_pwd[0:len(a:which_dir)-1] ==# a:which_dir
+		silent! execute '0r ~/.vim/templates/skeleton_cp.cpp'
+		10
+	endif
+endfunction
+
+augroup templates
+	au!
+	au BufNewFile *.cpp call Skel('/home/neon/workspace/codechef')
+	au BufNewFile *.cpp call Skel('/home/neon/workspace/codeforces')
+	au BufNewFile *.cpp call Skel('/home/neon/workspace/foobarcp')
+	au BufNewFile *.cpp call Skel('/home/neon/workspace/hashcode')
+augroup END
 
 nnoremap <leader><leader> <C-^>
 
