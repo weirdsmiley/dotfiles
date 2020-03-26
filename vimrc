@@ -164,18 +164,6 @@ let g:airline_symbols.dirty='⚡'
 
 map <leader>n :NERDTreeToggle<CR>
 
-" Variables for codeforces.vim
-" let g:CodeForcesCount = 30
-" let g:CodeForcesContestID = 604
-" let g:CodeForcesUpdateInterval = 2
-" let g:CodeForcesCountOfSubmits = 10
-" let g:CodeForcesShowUnofficial = 1
-" let g:CodeForcesFriends = 1
-" let g:CodeForcesUsername = 'manasmk'
-" let g:CodeForcesPassword = 'Qwertypi#123'
-" let g:CodeForcesLang = 'en'
-
-
 " Custom mappings
 " ===============
 " Compile and run cpp code
