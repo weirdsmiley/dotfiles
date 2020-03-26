@@ -142,18 +142,6 @@ let NERDTreeBookmarksFile=expand("$HOME/.vim/NERDTreeBookmarks")
 let NERDTreeShowBookmarks=1
 let NERDTreeHighlightCursorline=1
 
-
-"let g:lightline = {
-"      \ 'colorscheme': 'Tomorrow_Night_Blue',
-"      \ 'active': {
-"      \   'left': [ [ 'mode', 'paste' ],
-"      \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
-"      \ },
-"      \ 'component_function': {
-"      \   'gitbranch': 'fugitive#head'
-"      \ },
-"      \ }
-
 " airline configurations
 if !exists('g:airline_symbols')
 	let g:airline_symbols = {}
