@@ -230,6 +230,14 @@ augroup numbertoggle
 	au BufLeave,FocusLost,WinLeave   * if &number | set norelativenumber | endif
 augroup END
 
+augroup fortext
+	au!
+	au BufNewFile,BufEnter,FocusGained,WinEnter *.txt set colorcolumn=79
+	au BufNewFile,BufEnter,FocusGained,WinEnter *.md set colorcolumn=79
+	au BufLeave,FocusLost,WinLeave *.txt set colorcolumn=
+	au BufLeave,FocusLost,WinLeave *.md set colorcolumn=
+augroup END
+
 nnoremap <leader><leader> <C-^>
 
 " temporary usage of fzf
