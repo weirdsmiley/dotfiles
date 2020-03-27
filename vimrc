@@ -2,6 +2,8 @@ runtime! archlinux.vim
 " e.g.	:Man fork
 runtime ftplugin/man.vim
 
+set runtimepath+=/home/neon/workspace/vimplugins/mpc/
+
 " Set compatibility to Vim only
 set nocompatible
 
@@ -62,8 +64,8 @@ set ttyfast
 " only if vim --version | grep xterm_clipboard
 " return +xterm_clipboard
 " set clipboard=unnamedplus
-" straight outta vim fandom ()
 "
+" straight outta vim fandom ()
 " what can be done:
 " 1. selection of a blob of text in visual mode
 " 2. going to command line mode (:)
@@ -218,6 +220,14 @@ augroup templates
 	au BufNewFile *.cpp call Skel('/home/neon/workspace/codeforces')
 	au BufNewFile *.cpp call Skel('/home/neon/workspace/foobarcp')
 	au BufNewFile *.cpp call Skel('/home/neon/workspace/hashcode')
+augroup END
+
+" turn off relative numbering when buffer loses focus
+" from - https://github.com/jeffkreeftmeijer/vim-numbertoggle
+augroup numbertoggle
+	au!
+	au BufEnter,FocusGained,WinEnter * if &number | set relativenumber | endif
+	au BufLeave,FocusLost,WinLeave   * if &number | set norelativenumber | endif
 augroup END
 
 nnoremap <leader><leader> <C-^>
