@@ -31,6 +31,9 @@ set breakindentopt=shift:8
 " Syntax highlighting
 syntax on
 
+" open help on right window
+autocmd FileType help wincmd L
+
 " Relative number
 set relativenumber
 
@@ -42,6 +45,9 @@ set scrolloff=5
 
 " all matches on line subs instead one, by default
 set gdefault
+
+" switch buffers without saving
+set hidden
 
 " highlight search
 set hlsearch
@@ -223,7 +229,7 @@ augroup templates
 augroup END
 
 " turn off relative numbering when buffer loses focus
-" from - https://github.com/jeffkreeftmeijer/vim-numbertoggle
+" from → https://github.com/jeffkreeftmeijer/vim-numbertoggle
 augroup numbertoggle
 	au!
 	au BufEnter,FocusGained,WinEnter * if &number | set relativenumber | endif
@@ -232,10 +238,10 @@ augroup END
 
 augroup fortext
 	au!
-	au BufNewFile,BufEnter,FocusGained,WinEnter *.txt set colorcolumn=79
-	au BufNewFile,BufEnter,FocusGained,WinEnter *.md set colorcolumn=79
-	au BufLeave,FocusLost,WinLeave *.txt set colorcolumn=
-	au BufLeave,FocusLost,WinLeave *.md set colorcolumn=
+	au BufNewFile *.txt set colorcolumn=79
+	au BufNewFile *.md set colorcolumn=79
+	au BufLeave *.txt set colorcolumn=
+	au BufLeave *.md set colorcolumn=
 augroup END
 
 nnoremap <leader><leader> <C-^>
