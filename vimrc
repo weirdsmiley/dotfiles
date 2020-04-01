@@ -31,9 +31,6 @@ set breakindentopt=shift:8
 " Syntax highlighting
 syntax on
 
-" open help on right window
-autocmd FileType help wincmd L
-
 " Relative number
 set relativenumber
 
@@ -210,6 +207,8 @@ let g:rust_playpen_url = 'https://play.rust-lang.org/'
 " compiling and running code
 autocmd FileType rust map<leader>l :RustRun!<cr>
 
+" open help on right window
+autocmd FileType help wincmd L
 
 " skeletons for competitive programming
 function! Skel(which_dir)
