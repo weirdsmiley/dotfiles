@@ -67,36 +67,6 @@ set ttyfast
 " only if vim --version | grep xterm_clipboard
 " return +xterm_clipboard
 " set clipboard=unnamedplus
-"
-" straight outta vim fandom ()
-" what can be done:
-" 1. selection of a blob of text in visual mode
-" 2. going to command line mode (:)
-" 3. :'<,'>cz ....etc
-"
-" z → X11-clipboard
-" x → X11 primary selection
-" v → X11 secondary selection
-"
-" how to → ? (<C-v>u2192)
-" while in insert mode, hit <C-v> followed by `u`
-" then the unicode codepoint
-"
-command -range Cz :silent :<line1>,<line2>w !xsel -i -b
-command -range Cx :silent :<line1>,<line2>w !xsel -i -p
-command -range Cv :silent :<line1>,<line2>w !xsel -i -s
-cabbrev cv Cv
-cabbrev cz Cz
-cabbrev cx Cx
-
-command -range Pz :silent :r !xsel -o -b
-command -range Px :silent :r !xsel -o -p
-command -range Pv :silent :r !xsel -o -s
-
-cabbrev pz Pz
-cabbrev px Px
-cabbrev pv Pv
-" end
 
 " viminfo confs
 set viminfo='10,<100,:100,%,n~/.vim/.viminfo
@@ -108,31 +78,40 @@ set viminfo='10,<100,:100,%,n~/.vim/.viminfo
 " Enable mouse
 " set mouse=a
 
+set encoding=utf8
+set guifont=DroidSansMono\ Nerd\ Font\ 16
+
+if has("gui_running")
+	set guifont=Inconsolata\ 16
+endif
+
 " Theme
 set termguicolors
-colorscheme deus
+colorscheme gruvbox
+"colorscheme deus
 "colorscheme deep-space
 set fillchars+=vert:\ 
-set guifont=Menlo_for_Powerline:h9 
+"set guifont=Menlo_for_Powerline:h9 
 "set background=light   " Setting light mode
 set background=dark    " Setting dark mode
 
-hi Normal guibg=NONE ctermbg=NONE
+"hi Normal guibg=NONE ctermbg=NONE
 
 set laststatus=2
 filetype on
 
 filetype plugin indent on
 
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
+"set rtp+=~/.vim/bundle/Vundle.vim
+"call vundle#begin()
 
-Plugin 'itchyny/lightline.vim'
+"Plugin 'itchyny/lightline.vim'
 " NeoBundle 'itchyny/lightline.vim'
 " Plug 'itchyny/lightline.vim'
+"Plugin 'ycm-core/YouCompleteMe'
 
 " All of your Plugins must be added before the following line 
-call vundle#end()            " required 
+"call vundle#end()            " required 
 
 execute pathogen#infect()
 
@@ -166,12 +145,28 @@ let g:airline_symbols.readonly = ''
 let g:airline_symbols.linenr = '☰'
 let g:airline_symbols.maxlinenr = ''
 let g:airline_symbols.dirty='⚡'
+let g:airline_powerline_fonts = 1
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#ycm#enabled = 1
+let g:airline#extensions#ycm#error_symbol = 'E:'
+let g:airline#extensions#ycm#warning_symbol = 'W:'
 
 map <leader>n :NERDTreeToggle<CR>
+
+" nercommenter config
+"----------------------
+" Add spaces after comment delimiters by default
+let g:NERDSpaceDelims = 1
+" Use compact syntax for prettified multi-line comments
+let g:NERDCompactSexyComs = 1
+" Align line-wise comment delimiters flush left instead of following code indentation
+let g:NERDDefaultAlign = 'left'
 
 " Custom mappings
 " ===============
 " Compile and run cpp code
+" IMPORTANT : try doing if binary exists then dont compile again
+" i.e. if no changes then no compile
 autocmd FileType cpp map <leader>l :!clear && g++ -g % && echo "done compiling" && echo "running..." && ./a.out<cr>
 autocmd FileType cpp map ;l :!clear && g++ -g % && gdb ./a.out<cr>
 
@@ -180,7 +175,18 @@ autocmd FileType c map <leader>l :!clear && gcc -g % && echo "done compiling" &&
 autocmd FileType c map ;l :!clear && gcc -g % && gdb ./a.out<cr>
 
 " Markdown
-autocmd FileType markdown map <leader>l :execute 'silent !okular % &> /dev/null  &'<cr> | redraw!
+function! Compile_Open_MD()
+	" compile using pandoc
+	let pdfname = expand(expand('%:t:r') . ".pdf")
+	execute '!echo "Generating pdf..." && pandoc % -o ' . pdfname . ' --table-of-contents --pdf-engine=xelatex --indented-code-classes=c --highlight-style=monochrome -V documentclass=report -V papersize=A5 -V geometry:margin=0.4in > /dev/null 2>&1 '
+
+	" open using okular
+	execute 'silent !okular ' . pdfname . ' &> /dev/null &'
+	redraw!
+endfunction
+" IMPORTANT
+autocmd FileType markdown map <leader>l :call Compile_Open_MD()<cr>
+" autocmd FileType markdown map <leader>l :call Compile_Open_MD() && execute 'silent !okular %.pdf &> /dev/null  &'<cr> | redraw!
 
 " Change current window size by +10
 "map + :res +10<cr>
