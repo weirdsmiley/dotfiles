@@ -87,8 +87,8 @@ endif
 
 " Theme
 set termguicolors
-colorscheme gruvbox
-"colorscheme deus
+"colorscheme gruvbox
+colorscheme deus
 "colorscheme deep-space
 set fillchars+=vert:\ 
 "set guifont=Menlo_for_Powerline:h9 
@@ -178,7 +178,7 @@ autocmd FileType c map ;l :!clear && gcc -g % && gdb ./a.out<cr>
 function! Compile_Open_MD()
 	" compile using pandoc
 	let pdfname = expand(expand('%:t:r') . ".pdf")
-	execute '!echo "Generating pdf..." && pandoc % -o ' . pdfname . ' --table-of-contents --pdf-engine=xelatex --indented-code-classes=c --highlight-style=monochrome -V documentclass=report -V papersize=A5 -V geometry:margin=0.4in > /dev/null 2>&1 '
+	execute '!echo "Generating pdf..." && pandoc % -o ' . pdfname . ' --table-of-contents --pdf-engine=xelatex --indented-code-classes=c --highlight-style=tango -V documentclass=report -V papersize=A5 -V colorlinks -V urlcolor=NavyBlue -V toccolor=NavyBlue -V geometry:"top=1cm, bottom=1.5cm, left=1cm, right=1cm" > /dev/null 2>&1 '
 
 	" open using okular
 	execute 'silent !okular ' . pdfname . ' &> /dev/null &'
@@ -233,6 +233,28 @@ augroup templates
 	au BufNewFile *.cpp call Skel('/home/neon/workspace/hashcode')
 augroup END
 
+" add current time while hitting enter key in insert mode
+" useful while note-taking etc.
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" for buffer local mappings :
+"     if timestamping is needed only in one buffer, define function in
+"     command-mode, and use 
+"         :inoremap <buffer> <CR> <ESC>:call PrependTime()<CR>A
+"     to define buffer-local map
+"     
+"     another way is to use Funcref `:h Funcref`
+"     but this way throws some error of refer. not found in other buffers
+"
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" function PrependTime(which_dir)
+"         let l:curr_pwd = getcwd()
+"         if curr_pwd[0:len(a:which_dir)-1] ==# a:which_dir
+"                 r !printf '[' && date | awk '{printf $5}' && printf '] '
+"                 " execute 'normal A'
+"         endif
+" endfunction
+" autocmd FileType markdown inoremap <ENTER> <ESC>:call PrependTime('/home/neon/workspace/notes')<cr>A
+
 " turn off relative numbering when buffer loses focus
 " from → https://github.com/jeffkreeftmeijer/vim-numbertoggle
 augroup numbertoggle
@@ -243,13 +265,23 @@ augroup END
 
 augroup fortext
 	au!
-	au BufNewFile *.txt set colorcolumn=79
-	au BufNewFile *.md set colorcolumn=79
+	au BufNewFile *.txt set colorcolumn=80
+	au BufNewFile *.md set colorcolumn=80
 	au BufLeave *.txt set colorcolumn=
 	au BufLeave *.md set colorcolumn=
 augroup END
 
+" does something ?? (:h E23)
 nnoremap <leader><leader> <C-^>
+
+" add = and - below the title line in insert mode
+" This is a title
+" ===============
+autocmd FileType text,markdown inoremap <buffer> === <ESC>kyypV:s/./=/<cr>:noh<cr>o
+autocmd FileType text,markdown inoremap <buffer> --- <ESC>kyypV:s/./-/<cr>:noh<cr>o
+
+" modeline disabled
+set nomodeline
 
 " temporary usage of fzf
 set rtp+=~/.fzf
