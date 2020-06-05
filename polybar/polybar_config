@@ -29,7 +29,9 @@ background-alt = #aa444444
 ; ####################################
 
 foreground = #00f9ff
+;foreground = #eaeaea
 foreground-alt = #80bbff
+;foreground-alt = #ffffff
 
 primary = #ffb52a
 secondary = #ff0000
@@ -68,7 +70,7 @@ font-0 = FontAwesome:size=12;1
 modules-left = i3
 ; modules-center = xwindow mpd
 ; alse is removed from modules-right, xbacklight and temperature are removed too
-modules-right = pulseaudio memory cpu battery date powermenu
+modules-right = timer pulseaudio memory cpu cputemp battery date powermenu
 
 tray-position = right
 tray-padding = 2
@@ -279,6 +281,16 @@ format-prefix = CPU:
 format-prefix-foreground = ${colors.foreground-alt}
 format-underline = #f90000
 label = %percentage:2%%
+
+[module/cputemp]
+type = custom/script
+exec = ~/.config/polybar/show_temp.sh
+format-underline = #f90000 
+interval = 5
+
+[module/timer]
+type = custom/script
+exec = 
 
 [module/memory]
 type = internal/memory

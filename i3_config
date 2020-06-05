@@ -10,16 +10,50 @@ floating_modifier $super
 
 #autostart
 # exec --no-startup-id hsetroot -full ~/Pictures/foo33.png
+#exec -no-startup-id hsetroot -fill ~/Pictures/archie.png
 exec --no-startup-id hsetroot -fill ~/Pictures/test/buckethead2.png
+#exec --no-startup-id hsetroot -fill ~/Pictures/lake3.png
 exec --no-startup-id xsettingsd &
 #exec --no-startup-id compton -b
-exec --no-startup-id picom -f --config ~/.config/picom.config
+#exec --no-startup-id picom -f --config ~/.config/picom.conf
 exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 exec --no-startup-id /usr/lib/geoclue-2.0/demos/agent
 exec --no-startup-id "redshift-gtk &"
 exec --no-startup-id "setxkbmap -option caps:swapescape"
+exec --no-startup-id dunst
+exec --no-startup-id ./.config/battinfo/battinfo &
 
-# start a terminal
+#scratchpad for notes (vim+orgmode?/vim-notes)
+#exec --no-startup-id konsole -p tabtitle='Notepad' --profile ~/.local/share/konsole/Notes.profile --hide-menubar -e tmux -u attach-session -t Notes -c ~/workspace/notes/src/manage-notes.sh
+#exec_always --no-startup-id konsole -p tabtitle='Notepad' --profile ~/.local/share/konsole/Notes.profile --hide-menubar -e tmux -u attach-session -t Notes -c ~/workspace/notes/src/manage-notes.sh --name=dropdown
+exec --no-startup-id gnome-terminal --name=Notepad --hide-menubar -- tmux -u new-session -A -s Notes -c ~/workspace/notes/
+for_window [instance="Notepad"] floating enable;
+for_window [instance="Notepad"] move scratchpad; [instance="Notepad"] scratchpad show; move scratchpad
+#bindsym $super+u [instance="Notepad"] scratchpad show; [instance="Notepad"] move position center
+#bindsym $super+Shift+u resize grow height 10 px or 10 ppt
+
+#useless
+#for_window [instance="dropdown"] floating enable;
+#for_window [instance="dropdown"] move scratchpad; [instance="dropdown"] scratchpad show; move scratchpad
+#bindsym $super+u [instance="dropdown"] scratchpad show
+#bindsym $super+Shift+u resize grow height 10 px or 10 ppt
+
+################################################################################
+##                       TESTING                                              ##
+################################################################################
+# Swaps container marked »A« and »B«
+#[con_mark="^A$"] swap container with mark B
+# bindsym $super+Shift+s swap container with container last
+
+################################################################################
+##                       TESTING                                              ##
+################################################################################
+
+# Make the currently focused window a scratchpad
+bindsym $super+Shift+u move scratchpad
+# Show the first scratchpad window
+bindsym $super+u scratchpad show
+
 bindsym $super+Return exec konsole
 
 # start dmenu (a program launcher)
@@ -77,10 +111,13 @@ bindsym $super+f fullscreen toggle
 # change container layout split
 bindsym $super+s layout toggle split
 
+bindsym $super+t layout stacking
+
 # toggle tiling / floating
 bindsym $super+space floating toggle
 
 # saving pdf files and restoring them (when reboot)
+# change needed if restore_pdfs_test.sh succeeds
 bindsym $super+Control+p exec "restore_pdfs.sh"
 bindsym $super+Control+Shift+p exec "save_pdfs.sh"
 
@@ -98,8 +135,6 @@ bindsym $super+7 workspace 7
 bindsym $super+8 workspace 8
 bindsym $super+9 workspace 9
 bindsym $super+0 workspace 10
-
-bindsym $super+w workspace 2
 
 # switching to workspaces: next, previous, last visited
 bindsym $super+Tab workspace next
@@ -166,12 +201,12 @@ bindsym $alt+q exec i3-input -F '[con_mark="%s"] focus' -l 1 -P 'Goto: '
 # window rules, you can find the window class using xprop
 for_window [class=".*"] border pixel 3
 #assign [class=konsole] 2
-assign [class=Firefox|Transmission-gtk] 4
-assign [class=Emacs] 3
-assign [class=Thunar|File-roller] 4
-assign [class=Geany|Evince|Gucharmap|Soffice|libreoffice*] 4
-assign [class=Audacity|Vlc|mpv|Ghb|Xfburn|Gimp*|Inkscape] 4
-assign [class=Lxappearance|System-config-printer.py|Lxtask|GParted|Pavucontrol|Exo-helper*|Lxrandr|Arandr] 6
+#assign [class=Firefox|Transmission-gtk] 4
+#assign [class=Emacs] 3
+#assign [class=Thunar|File-roller] 4
+#assign [class=Geany|Evince|Gucharmap|Soffice|] 4
+#assign [class=Audacity|Vlc|mpv|Ghb|Xfburn|Gimp*|Inkscape] 4
+#assign [class=Lxappearance|System-config-printer.py|Lxtask|GParted|Pavucontrol|Exo-helper*|Lxrandr|Arandr] 6
 for_window [class=Viewnior|feh|Audacious|File-roller|Lxappearance|Lxtask|Pavucontrol] floating enable
 for_window [class=konsole|URxvt|Firefox|Geany|Evince|Soffice|libreoffice*|mpv|Ghb|Xfburn|Gimp*|Inkscape|Vlc|Lxappearance|Audacity] focus
 for_window [class=Xfburn|GParted|System-config-printer.py|Lxtask|Pavucontrol|Exo-helper*|Lxrandr|Arandr] focus
@@ -184,4 +219,4 @@ client.urgent           #2f343a #900000 #ffffff #900000   #900000
 client.placeholder      #000000 #0c0c0c #ffffff #000000   #0c0c0c
 client.background       #ffffff
 
-
+# vim:filetype=i3

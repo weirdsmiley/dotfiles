@@ -63,6 +63,11 @@ match_lhs=""
 	&& match_lhs=$(dircolors --print-database)
 [[ $'\n'${match_lhs} == *$'\n'"TERM "${safe_term}* ]] && use_color=true
 
+# adding git branch in PS1
+parse_git_branch() {
+	git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+}
+
 if ${use_color} ; then
 	# Enable colors for ls, etc.  Prefer ~/.dir_colors #64489
 	if type -P dircolors >/dev/null ; then
@@ -74,9 +79,11 @@ if ${use_color} ; then
 	fi
 
 	if [[ ${EUID} == 0 ]] ; then
-		PS1='\[\033[01;31m\][\h\[\033[01;36m\] \w\[\033[01;31m\]]\n\$\[\033[00m\] '
+		# PS1='\[\033[01;31m\][\h\[\033[01;36m\] \w\[\033[01;31m\]]\n\$\[\033[00m\] '
+		PS1='\[\033[01;31m\][\h\[\033[01;36m\] \w\[\033[01;31m\]] $(parse_git_branch)\n\$\[\033[00m\] '
 	else
-		PS1='\[\033[01;32m\][\u@\h\[\033[01;37m\] \w\[\033[01;32m\]]\n\$\[\033[00m\] '
+		# PS1='\[\033[01;32m\][\u@\h\[\033[01;37m\] \w\[\033[01;32m\]]\n\$\[\033[00m\] '
+		PS1='\[\033[01;32m\][\u@\h\[\033[01;37m\] \w\[\033[01;32m\]] $(parse_git_branch)\n\$\[\033[00m\] '
 	fi
 
 	alias ls='ls --color=auto'
@@ -169,3 +176,4 @@ PERL_MB_OPT="--install_base \"/home/neon/perl5\""; export PERL_MB_OPT;
 PERL_MM_OPT="INSTALL_BASE=/home/neon/perl5"; export PERL_MM_OPT;
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+export PATH="$PATH:~/azuredatastudio-linux-x64"
