@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# running an infinite-loop 
+# echos a dunst notification when battery < 30%
+
+while true
+do
+	BATTINFO=`acpi -b`
+	if [[ `echo $BATTINFO | grep Discharging` && `echo $BATTINFO | cut -f 4 -d " " | grep -Eo '[0-9]{1,3}'` < 30 ]] ; then
+	    DISPLAY=:0 /usr/bin/notify-send "low battery" "$BATTINFO"
+	    echo $BATTINFO
+	fi
+	sleep 300
+done
