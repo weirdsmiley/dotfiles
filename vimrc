@@ -16,6 +16,9 @@ let g:ft_man_open_mode = 'vert'
 " change leader key
 let mapleader = ','
 
+" localleader
+let maplocalleader = "\\"
+
 " split right and below
 set splitbelow splitright
 
@@ -188,6 +191,20 @@ endfunction
 autocmd FileType markdown map <leader>l :call Compile_Open_MD()<cr>
 " autocmd FileType markdown map <leader>l :call Compile_Open_MD() && execute 'silent !okular %.pdf &> /dev/null  &'<cr> | redraw!
 
+" Latex
+function! Compile_Open_Latex()
+	" compile using pdflatex
+	let pdfname = expand(expand('%:t:r') . ".pdf")
+	execute '!echo "Generating pdf..." && pdflatex % -o . pdfname > /dev/null 2>&1 '
+	"
+	" open using okular
+	execute 'silent !okular ' . pdfname . ' &> /dev/null &'
+	redraw!
+endfunction
+" keybinding for compiling and opening latex
+autocmd FileType tex map <leader>l :call Compile_Open_Latex()<cr>
+
+
 " Change current window size by +10
 "map + :res +10<cr>
 map [= :res +10<cr>
@@ -217,20 +234,26 @@ autocmd FileType rust map<leader>l :RustRun!<cr>
 autocmd FileType help wincmd L
 
 " skeletons for competitive programming
-function! Skel(which_dir)
+function! Skel(which_dir, which_template)
 	let l:curr_pwd = getcwd()
 	if curr_pwd[0:len(a:which_dir)-1] ==# a:which_dir
-		silent! execute '0r ~/.vim/templates/skeleton_cp.cpp'
-		10
+		if a:which_template ==# 'cpp'
+			silent! execute '0r ~/.vim/templates/skeleton_cp.cpp'
+			10
+		elseif a:which_template ==# 'latex'
+			silent! execute '0r ~/.vim/templates/skeleton_latex.tex'
+			4
+		endif
 	endif
 endfunction
 
 augroup templates
 	au!
-	au BufNewFile *.cpp call Skel('/home/neon/workspace/codechef')
-	au BufNewFile *.cpp call Skel('/home/neon/workspace/codeforces')
-	au BufNewFile *.cpp call Skel('/home/neon/workspace/foobarcp')
-	au BufNewFile *.cpp call Skel('/home/neon/workspace/hashcode')
+	au BufNewFile *.cpp call Skel('/home/neon/workspace/codechef', 'cpp')
+	au BufNewFile *.cpp call Skel('/home/neon/workspace/codeforces', 'cpp')
+	au BufNewFile *.cpp call Skel('/home/neon/workspace/foobarcp', 'cpp')
+	au BufNewFile *.cpp call Skel('/home/neon/workspace/hashcode', 'cpp')
+	au BufNewFile *.tex call Skel('/home/neon', 'latex')
 augroup END
 
 " add current time while hitting enter key in insert mode
@@ -262,6 +285,8 @@ augroup numbertoggle
 	au BufEnter,FocusGained,WinEnter * if &number | set relativenumber | endif
 	au BufLeave,FocusLost,WinLeave   * if &number | set norelativenumber | endif
 augroup END
+
+autocmd FileType text,markdown set tabstop=4
 
 augroup fortext
 	au!
