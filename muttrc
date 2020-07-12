@@ -1,6 +1,6 @@
 # About Me
-set from = ""
-set realname = ""
+set from = "<emailid>"
+set realname = "<name>"
 set signature = "$HOME/.mutt/signature"
 
 # My credentials
