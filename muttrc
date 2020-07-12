@@ -1,0 +1,70 @@
+# About Me
+set from = ""
+set realname = ""
+set signature = "$HOME/.mutt/signature"
+
+# My credentials
+set smtp_url = "smtp://<emailid>@smtp.gmail.com:587/"
+set imap_user = "<emailid>"
+
+# My mailboxes
+set folder = "imaps://<emailid>@imap.gmail.com:993/"
+set spoolfile = "+INBOX"
+set mbox_type = "Maildir"
+
+# Where to put the stuff
+set header_cache = "~/.mutt/cache/headers"
+set message_cachedir = "~/.mutt/cache/bodies"
+set certificate_file = "~/.mutt/certificates"
+
+# Options
+set timeout = 5
+set mail_check = 30
+set move = no
+set imap_keepalive = 900
+set sort = threads
+set sort_aux = last-date-received
+set editor = "vim"
+
+# for converting UTC to IST in messages
+# display_filter pipes message through an executable before showing
+set display_filter="exec sed -r \"s/^Date:\\s*(([F-Wa-u]{3},\\s*)?[[:digit:]]{1,2}\\s+[A-Sa-y]{3}\\s+[[:digit:]]{4}\\s+[[:digit:]]{1,2}:[[:digit:]]{1,2}(:[[:digit:]]{1,2})?\\s+[+-][[:digit:]]{4})/date +'Date: %a, %d %b %Y %H:%M:%S %z' -d '\\1'/e\""
+#
+# Remove delete marked messages from the server
+set maildir_trash = no
+# Beep on new messages
+set beep_new
+# Dont insert + char for wrapped lines
+unset markers
+# Don't collapse if any unread message in the thread
+set collapse_unread = no
+
+# GnuPG bootstrap
+# source "gpg -dq $HOME/.mutt/passwords.gpg |"
+
+# Navigation
+bind pager j next-line
+bind pager k previous-line
+bind attach,index,pager \CD next-page
+bind attach,index,pager \CU previous-page
+bind pager g top
+bind pager G bottom
+bind attach,index g first-entry
+bind attach,index G last-entry
+
+# Reply to all recipients
+bind index,pager R group-reply
+
+# Sidebar
+set sidebar_visible
+bind index,pager B sidebar-toggle-visible   # Use 'B' to switch the Sidebar on and off
+set sidebar_width = 34                  # Plenty of space
+set sidebar_divider_char = '░░ '          # Pretty line-drawing character
+set sidebar_format = "%B%?F? [%F]?%* %?N?%N/?%S"
+set mail_check_stats
+
+# Aliases
+# source "$HOME/.mutt/aliases"
+
+# colorschemes
+# source "$HOME/.mutt/mutt-colors-solarized/mutt-colors-solarized-dark-16.muttrc"
