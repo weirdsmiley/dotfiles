@@ -475,8 +475,8 @@ nnoremap <Leader><Leader> <C-^>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Add '=' or '-' below the title line in insert mode
-au FileType text,markdown inoremap <buffer> === <ESC>kyypV:s/./=/<cr>:noh<cr>o
-au FileType text,markdown inoremap <buffer> --- <ESC>kyypV:s/./-/<cr>:noh<cr>o
+au FileType text,markdown inoremap <buffer> === <ESC>kyypV:s/./=/g<cr>:noh<cr>o
+au FileType text,markdown inoremap <buffer> --- <ESC>kyypV:s/./-/g<cr>:noh<cr>o
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
