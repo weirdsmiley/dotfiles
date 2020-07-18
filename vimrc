@@ -1,6 +1,6 @@
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Author: Manas (weirdsmiley) <manas18244@iiitd.ac.in>
-" Last Changed: July 13, 2020
+" Last Changed: July 12, 2020
 "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -401,7 +401,13 @@ function! Skel(which_dir, which_template)
 		elseif a:which_template ==# 'latex'
 			silent! execute '0r ~/.vim/templates/skeleton_latex.tex'
 			execute "set filetype=tex"
-			21
+			30
+		elseif a:which_template ==# 'c'
+			silent! execute '0r ~/.vim/templates/skeleton_c.c'
+			5
+		elseif a:which_template ==# 'rust'
+			silent! execute '0r ~/.vim/templates/skeleton_rust.rs'
+			5
 		endif
 	endif
 endfunction
@@ -413,6 +419,8 @@ augroup Templates
 	au BufNewFile *.cpp call Skel('/home/neon/workspace/foobarcp', 'cpp')
 	au BufNewFile *.cpp call Skel('/home/neon/workspace/hashcode', 'cpp')
 	au BufNewFile *.tex call Skel('/home/neon', 'latex')
+	au BufNewFile *.c call Skel('/home/neon', 'c')
+	au BufNewFile *.rs call Skel('/home/neon', 'rust')
 augroup END
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
