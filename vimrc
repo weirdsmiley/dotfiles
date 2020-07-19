@@ -527,13 +527,13 @@ let g:ctrlp_cmd = 'CtrlP'
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Open URLs in default browser
 function! HandleURL()
-  let s:url = matchstr(getline("."), '[a-z]*:\/\/[^ >,;]*')
-  echo s:url
-  if s:url != ""
-    silent exec "!xdg-open '".s:url."'"
-  else
-    echo "No URI found in line."
-  endif
+    let s:url = join(split(matchstr(getline("."), '[a-z]*:\/\/[^ >,;]*'), "#"), "\\#")
+    echo s:url
+    if s:url != ""
+        silent exec "!xdg-open '".s:url."'"
+    else
+        echo "No URI found in line."
+    endif
 endfunction
 
 nnoremap gx :call HandleURL()<cr>
