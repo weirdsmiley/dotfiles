@@ -87,6 +87,12 @@ set breakindentopt=shift:4
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Filetype settings
+filetype on
+filetype plugin indent on
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Tab settings
 " Number of spaces <Tab> counts for
 set tabstop=4
@@ -94,6 +100,8 @@ set tabstop=4
 set softtabstop=4
 " Spaces used for every indentation by >> <<
 set shiftwidth=4
+" On pressing tab, insert 4 spaces
+set expandtab
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -197,12 +205,6 @@ set fillchars+=vert:┆
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Status line be always visible
 set laststatus=2
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Filetype settings
-filetype on
-filetype plugin indent on
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 "set rtp+=~/.vim/bundle/Vundle.vim
@@ -406,7 +408,7 @@ function! Skel(which_dir, which_template)
 			silent! execute '0r ~/.vim/templates/skeleton_c.c'
 			5
 		elseif a:which_template ==# 'rust'
-			silent! execute '0r ~/.vim/templates/skeleton_rust.rs'
+			silent! execute '0r ~/.vim/templates/skeleton_c.c'
 			5
 		endif
 	endif
@@ -420,7 +422,7 @@ augroup Templates
 	au BufNewFile *.cpp call Skel('/home/neon/workspace/hashcode', 'cpp')
 	au BufNewFile *.tex call Skel('/home/neon', 'latex')
 	au BufNewFile *.c call Skel('/home/neon', 'c')
-	au BufNewFile *.rs call Skel('/home/neon', 'rust')
+	au BufNewFile *.rs call Skel('/home/neon', 'rs')
 augroup END
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -520,6 +522,21 @@ set runtimepath^=~/.vim/bundle/ctrlp.vim
 " Customize mappings
 let g:ctrlp_map = '<c-p>'
 let g:ctrlp_cmd = 'CtrlP'
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Open URLs in default browser
+function! HandleURL()
+  let s:url = matchstr(getline("."), '[a-z]*:\/\/[^ >,;]*')
+  echo s:url
+  if s:url != ""
+    silent exec "!xdg-open '".s:url."'"
+  else
+    echo "No URI found in line."
+  endif
+endfunction
+
+nnoremap gx :call HandleURL()<cr>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
