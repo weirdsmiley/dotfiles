@@ -234,9 +234,12 @@ cnoremap Q q
 " Toggle NERDTree window
 map <leader>n :NERDTreeToggle<CR>
 
+" Quick close NERDTree after opening a file
+let NERDTreeQuitOnOpen = 1
+
 " Expanding arrows
 let g:NERDTreeDirArrowExpandable = '➤'
-let g:NERDTreeDirArrowCollapsible = '➤'
+let g:NERDTreeDirArrowCollapsible = '⮩ '
 
 " Disable hijacking
 let g:NERDTreeHijackNetrw = 0
@@ -526,13 +529,17 @@ let g:ctrlp_cmd = 'CtrlP'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Open URLs in default browser
+" ERROR: Not working when "URL"
+" Takes the latter " along with URL
 function! HandleURL()
     let s:url = join(split(matchstr(getline("."), '[a-z]*:\/\/[^ >,;]*'), "#"), "\\#")
     echo s:url
     if s:url != ""
-        silent exec "!xdg-open '".s:url."'"
+        " silent exec "!xdg-open '".s:url."'"
+        silent exec "!firefox --new-tab '".s:url."'"
+        redraw!
     else
-        echo "No URI found in line."
+        echo "No URL found in line."
     endif
 endfunction
 
