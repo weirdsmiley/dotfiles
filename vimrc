@@ -529,8 +529,10 @@ let g:ctrlp_cmd = 'CtrlP'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Open URLs in default browser
-" ERROR: Not working when "URL"
-" Takes the latter " along with URL
+" ERROR: Not working-
+"   1. when "URL"  : Takes the latter " along with URL
+"   2. when (URL)  : Takes ) along with URL
+"   3. when (URL). : Takes ). along with URL
 function! HandleURL()
     let s:url = join(split(matchstr(getline("."), '[a-z]*:\/\/[^ >,;]*'), "#"), "\\#")
     echo s:url
