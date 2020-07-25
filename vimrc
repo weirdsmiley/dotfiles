@@ -49,6 +49,15 @@ let maplocalleader = "\\"
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Time out on mappings
+set timeout
+" Time out on keycodes
+set ttimeout
+" Set timeout to 500 ms
+set timeoutlen=500
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Orientation of opened windows
 " Split a window below and right side(vsplit) always
 set splitbelow splitright
