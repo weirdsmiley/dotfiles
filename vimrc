@@ -375,6 +375,29 @@ map ]- :res -10<cr>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" If < 4 buffers are opened in current window then power mapping maps each
+" buffer to <Function> keys (F1, F2, F3, F4)
+function! MapBuffers()
+    let s:buffers_list = filter(range(1, bufnr('$')), 'buflisted(v:val)')
+    let s:buffers_count = len(s:buffers_list)
+    if s:buffers_count > 4
+        echo "More than 4 buffers! I am not programmed for this."
+    else
+        " loop through elements of buffers_list and exec nnoremap
+        let idx = 1
+        for buf in s:buffers_list
+            execute "nnoremap <F" . idx . "> :" . buf . "b<CR>"
+            let idx = idx + 1
+        endfor
+        echo "Mapped buffers to Function keys."
+    endif
+endfunction
+
+" Power mapping : map buffers to respective function keys
+nnoremap <leader>mb :call MapBuffers()<CR>
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Change terminal's colors
 " SUGGESTION: Fix directory colors in terminal
 " hi Terminal ctermbg=black ctermfg=white guibg=black guifg=white
