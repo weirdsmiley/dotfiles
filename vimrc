@@ -1,13 +1,13 @@
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Author: Manas (weirdsmiley) <manas18244@iiitd.ac.in>
-" Last Changed: July 26, 2020
+" Last Changed: August 19, 2020
 "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Archlinux's global vimrc: /usr/share/vim/vimfiles/archlinux.vim
 " ! makes Vim source all found files
-runtime! archlinux.vim
+" runtime! archlinux.vim
 " Man command in Vim: /usr/share/vim/vim82/ftplugin/man.vim
 " Use:	:Man fork
 runtime ftplugin/man.vim
@@ -54,7 +54,7 @@ set timeout
 " Time out on keycodes
 set ttimeout
 " Set timeout to 500 ms
-set timeoutlen=500
+set timeoutlen=300
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -148,6 +148,19 @@ set ttyfast
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Save current buffer (VERY STUPID MAPPING, BUT I LIKE IT)
+nnoremap <leader>w :w<CR>
+nnoremap <leader>q :q<CR>
+
+" Exit Vim after deleting all buffers (unsaved)
+nnoremap ZQ :%bd\|q<CR>
+
+" Disable W & Q in Command-mode
+" cnoremap W<CR> w<CR>
+" cnoremap Q<CR> q<CR>
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " WORK: Tons of editing needed
 " entering special chars
 " for ä - a <BS> :
@@ -227,14 +240,6 @@ set laststatus=2
 " All of your Plugins must be added before the following line 
 "call vundle#end()            " required 
 
-execute pathogen#infect()
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Disable W & Q in Command-mode
-" SUGGESTION: Find better solution instead of replacing chars
-cnoremap W w
-cnoremap Q q
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " NERDTree Configurations
@@ -387,7 +392,7 @@ function! MapBuffers()
         let idx = 1
         for buf in s:buffers_list
             execute "nnoremap <F" . idx . "> :" . buf . "b<CR>"
-            let idx = idx + 1
+            let idx += 1
         endfor
         echo "Mapped buffers to Function keys."
     endif
@@ -410,7 +415,7 @@ map tt :vertical terminal<cr>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Quick open ~/.vimrc
-nnoremap <leader>ev <C-w><C-v><C-l>:e $MYVIMRC<cr>
+nnoremap <leader>ev :vsp $MYVIMRC<CR>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -425,6 +430,14 @@ let g:rust_fold = 1
 let g:rust_playpen_url = 'https://play.rust-lang.org/'
 " Compiling and running code
 autocmd FileType rust nnoremap <Leader>l :RustRun!<cr>
+
+" redefine RustPlay cmd with copying the URL and opening in firefox tab
+function! RustPlayRedefined()
+    let URL = split(execute("RustPlay"), " ")
+    silent exec "!firefox --new-tab '".URL[1]."'"
+    redraw!
+endfunction
+nnoremap <LocalLeader>l :call RustPlayRedefined()<CR>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -434,7 +447,7 @@ function! Skel(which_dir, which_template)
 	if curr_pwd[0:len(a:which_dir)-1] ==# a:which_dir
 		if a:which_template ==# 'cpp'
 			silent! execute '0r ~/.vim/templates/skeleton_cp.cpp'
-			10
+			17
 		elseif a:which_template ==# 'latex'
 			silent! execute '0r ~/.vim/templates/skeleton_latex.tex'
 			execute "set filetype=tex"
@@ -507,15 +520,15 @@ augroup END
 augroup Overflow80
 	au!
 	" Set border when entering insert mode
-	au InsertEnter *.txt,*.md,*.c,*.cpp,*.py,*.java,*.rs set colorcolumn=80
+	au InsertEnter *.txt,*.md,*.c,*.cpp,*.py,*.java,*.rs,*.sh set colorcolumn=80
 	" Unset border before leaving insert mode
-	au InsertLeave *.txt,*.md,*.c,*.cpp,*.py,*.java,*.rs set colorcolumn=
+	au InsertLeave *.c,*.cpp,*.py,*.java,*.rs,*.sh set colorcolumn=
 augroup END
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Switch to alternate file (if available)
-nnoremap <Leader><Leader> <C-^>
+nnoremap <Leader>. <C-^>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -560,6 +573,23 @@ let g:ctrlp_cmd = 'CtrlP'
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Gutentags configurations
+" ========================
+
+" Force update current tag file with current buffer
+nnoremap <LocalLeader>g :GutentagsUpdate<CR>
+" Update current tag file for whole project
+nnoremap <LocalLeader>g :GutentagsUpdate!<CR>
+
+" Enable gutentags
+let g:gutentags_enabled = 1
+
+" For debugging purposes (:GutentagsToggleTrace)
+let g:gutentags_define_advanced_commands = 1
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Open URLs in default browser
 " ERROR: Not working-
 "   1. when "URL"  : Takes the latter " along with URL
@@ -578,6 +608,35 @@ function! HandleURL()
 endfunction
 
 nnoremap gx :call HandleURL()<cr>
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Presentation and Creative Mode (for drawing diagrams and ASCII texts
+" purposes
+nmap <LocalLeader>b :.!toilet -w 200 -f term -F border<CR>
+
+" check if a bash command exists or not
+nmap <LocalLeader>f :.!toilet -w 200 <CR>
+nmap <LocalLeader>b :.!toilet -w 200 -f term -F border<CR>
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" TEST: Function for counting pattern occurence in a line
+
+function! Count_Occurence(matchstr)
+    let curpos = getcurpos()
+    let curline = getline(curpos[1])
+    let colno = 0
+    let counter = 0
+
+    while colno < curpos[2]
+        if curline[colno] =~ a:matchstr
+            let counter += 1
+        endif
+        let colno += 1
+    endwhile
+    echo "Count is " . counter
+endfunction
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
