@@ -11,6 +11,11 @@ set imap_user = "<emailid>"
 set folder = "imaps://<emailid>@imap.gmail.com:993/"
 set spoolfile = "+INBOX"
 set mbox_type = "Maildir"
+set record = "+Sent"
+set trash = "+Trash"
+set postponed = "+Drafts"
+
+mailboxes =INBOX =Sent =Trash =Drafts
 
 # Where to put the stuff
 set header_cache = "~/.mutt/cache/headers"
@@ -30,11 +35,16 @@ set editor = "vim"
 # display_filter pipes message through an executable before showing
 set display_filter="exec sed -r \"s/^Date:\\s*(([F-Wa-u]{3},\\s*)?[[:digit:]]{1,2}\\s+[A-Sa-y]{3}\\s+[[:digit:]]{4}\\s+[[:digit:]]{1,2}:[[:digit:]]{1,2}(:[[:digit:]]{1,2})?\\s+[+-][[:digit:]]{4})/date +'Date: %a, %d %b %Y %H:%M:%S %z' -d '\\1'/e\""
 #
+# Italicizing _word_ to 
+# set display_filter="exec <command>"
+#
 # Remove delete marked messages from the server
 set maildir_trash = no
 # Beep on new messages
 set beep_new
 # Dont insert + char for wrapped lines
+bind pager <up> previous-line
+bind pager <down> next-line
 unset markers
 # Don't collapse if any unread message in the thread
 set collapse_unread = no
@@ -58,13 +68,22 @@ bind index,pager R group-reply
 # Sidebar
 set sidebar_visible
 bind index,pager B sidebar-toggle-visible   # Use 'B' to switch the Sidebar on and off
-set sidebar_width = 34                  # Plenty of space
-set sidebar_divider_char = '░░ '          # Pretty line-drawing character
+set sidebar_width = 25                  # Plenty of space
+set sidebar_divider_char = ' ▒ '          # Pretty line-drawing character
 set sidebar_format = "%B%?F? [%F]?%* %?N?%N/?%S"
+bind index,pager \Ck sidebar-prev
+bind index,pager \Cj sidebar-next
+bind index,pager \Co sidebar-open
+bind index,pager \Cp sidebar-prev-new
+bind index,pager \Cn sidebar-next-new
 set mail_check_stats
 
+# ripMIME
+macro index,pager X "<pipe-message>ripmime -i - -d ~/Downloads/mail-attachs/"
+
 # Aliases
-# source "$HOME/.mutt/aliases"
+source "$HOME/.mutt/aliases"
 
 # colorschemes
 # source "$HOME/.mutt/mutt-colors-solarized/mutt-colors-solarized-dark-16.muttrc"
+source "$HOME/.mutt/colors.muttrc"
