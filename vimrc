@@ -1,6 +1,6 @@
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Author: Manas (weirdsmiley) <manas18244@iiitd.ac.in>
-" Last Changed: August 19, 2020
+" Last Changed: September 21, 2020
 "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -46,6 +46,9 @@ let g:ft_man_open_mode = 'vert'
 " <LocalLeader> in a filetype plugin
 " SUGGESTION: Consider better key for LocalLeader
 let maplocalleader = "\\"
+
+" Disable Ex-mode FFS!
+nnoremap Q <NOP>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -121,6 +124,10 @@ set relativenumber number
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Keep 5 lines off edge while scrolling
 set scrolloff=5
+
+" Smooth scrolling
+map <C-U> <C-Y><C-Y><C-Y><C-Y><C-Y><C-Y><C-Y><C-Y><C-Y><C-Y><C-Y><C-Y>
+map <C-D> <C-E><C-E><C-E><C-E><C-E><C-E><C-E><C-E><C-E><C-E><C-E><C-E>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -148,6 +155,17 @@ set ttyfast
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Remap movement keys when wrapping is on
+
+augroup OnWrapMovements
+	au!
+    autocmd Filetype tex,markdown map j gj
+    autocmd Filetype tex,markdown map k gk
+augroup END
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Save current buffer (VERY STUPID MAPPING, BUT I LIKE IT)
 nnoremap <leader>w :w<CR>
 nnoremap <leader>q :q<CR>
@@ -165,7 +183,7 @@ nnoremap ZQ :%bd\|q<CR>
 " entering special chars
 " for ä - a <BS> :
 " for ǎ - a <BS> <
-" <BS> = backspace
+" <BS> = backspaceFiletype 
 " although, use <C-k>, <C-v> if not a touch typist
 "set dg
 
@@ -212,11 +230,13 @@ endif
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Theme settings
-set termguicolors
+" set termguicolors
 " Colorscheme
 colorscheme deus
 " Set dark mode
 set background=dark
+" Status line color
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -277,6 +297,9 @@ if !exists('g:airline_symbols')
 	let g:airline_symbols = {}
 endif
 
+" Status bar color
+let g:airline_theme='dark'
+
 " Add symbols for customization
 let g:airline_left_sep = ''
 let g:airline_left_alt_sep = ''
@@ -324,12 +347,15 @@ let g:NERDDefaultAlign = 'left'
 " SUGGESTION: try doing if binary exists without change then dont compile again
 
 " Compile and run cpp code
-autocmd FileType cpp nnoremap <Leader>l :!clear && g++ -g % && echo "done compiling" && echo "running..." && ./a.out<cr>
-autocmd FileType cpp nnoremap ;l :!clear && g++ -g % && gdb ./a.out<cr>
+autocmd FileType cpp nnoremap <Leader>l :w <bar> !clear && g++ -g % && echo "done compiling" && echo "running..." && ./a.out<cr>
+autocmd FileType cpp nnoremap ;l :w <bar> !clear && g++ -g % && gdb ./a.out<cr>
 
 " Compile and run c code
-autocmd FileType c nnoremap <Leader>l :!clear && gcc -g % && echo "done compiling" && echo "running..." && ./a.out<cr>
-autocmd FileType c nnoremap ;l :!clear && gcc -g % && gdb ./a.out<cr>
+autocmd FileType c nnoremap <Leader>l :w <bar> !clear && gcc -g % && echo "done compiling" && echo "running..." && ./a.out<cr>
+autocmd FileType c nnoremap ;l :w <bar> !clear && gcc -g % && gdb ./a.out<cr>
+
+" Interpret python code
+autocmd Filetype python nnoremap <Leader>l :w <bar> !clear && python %<cr>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -374,7 +400,7 @@ augroup END
 " Resize current buffer
 " =====================
 " Change size by +10
-nnoremap [= :res +10<cr>
+nnoremap ]= :res +10<cr>
 " Change size by -10
 map ]- :res -10<cr>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -409,8 +435,17 @@ nnoremap <leader>mb :call MapBuffers()<CR>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Open terminal vertically
-map tt :vertical terminal<cr>
+" Open terminal vertically in split pane
+nnoremap tt :vertical terminal<CR>
+
+" Open terminal in a new tab
+nnoremap TT :tab terminal ++close<CR>
+
+function! OpenTerminalInNewTab()
+    " TODO: For mapping <F1> to Terminal tab and last tab
+    " for moving back and forth
+
+endfunction
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -429,6 +464,8 @@ let g:rust_fold = 1
 " URL for rust playground
 let g:rust_playpen_url = 'https://play.rust-lang.org/'
 " Compiling and running code
+" BIG ERROR: Opening different filetypes in vertical split, <Leader>l doesn't 
+" run appropriate commands, mixes up with other pane's filetype
 autocmd FileType rust nnoremap <Leader>l :RustRun!<cr>
 
 " redefine RustPlay cmd with copying the URL and opening in firefox tab
@@ -437,7 +474,21 @@ function! RustPlayRedefined()
     silent exec "!firefox --new-tab '".URL[1]."'"
     redraw!
 endfunction
-nnoremap <LocalLeader>l :call RustPlayRedefined()<CR>
+autocmd Filetype rust nnoremap <LocalLeader>l :call RustPlayRedefined()<CR>
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Configurations for vimtex
+" =========================
+
+" Activate vimtex for latex files with tex filetype
+let g:tex_flavor = 'latex'
+
+" Autocompletion
+let g:vimtex_complete_enabled = 1
+
+
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -565,11 +616,46 @@ map <leader>pc :call PlayChess()<cr>
 " =====================
 
 " Initializing plugin
-set runtimepath^=~/.vim/bundle/ctrlp.vim
+" set runtimepath^=~/.vim/bundle/ctrlp.vim
 
 " Customize mappings
-let g:ctrlp_map = '<c-p>'
-let g:ctrlp_cmd = 'CtrlP'
+" let g:ctrlp_map = '<c-p>'
+" let g:ctrlp_cmd = 'CtrlP'
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" FZF Configurations
+" ==================
+" Installation
+call plug#begin()
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+Plug 'stsewd/fzf-checkout.vim'
+call plug#end()
+
+set rtp+=~/.fzf
+
+" Key mappings
+" ============
+
+" Enable :Files or :GFiles based on if .git/ exists or not
+function! MainFZF()
+    if finddir(".git") ==# ".git"
+        " nmap <buffer> <silent> <C-p> :GFiles<CR>
+        execute "GFiles"
+    else
+        " nmap <buffer> <silent> <C-p> :Files<CR>
+        execute "Files"
+    endif
+endfunction
+nnoremap <C-p> :call MainFZF()<CR>
+
+" Open FZF Window in the middle instead of bottom
+let g:fzf_layout = { 'window' : { 'width' : 0.8, 'height' : 0.8 } }
+
+" Reverse the list; gitfiles at top
+let $FZF_DEFAULT_OPTS='--reverse'
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -595,16 +681,28 @@ let g:gutentags_define_advanced_commands = 1
 "   1. when "URL"  : Takes the latter " along with URL
 "   2. when (URL)  : Takes ) along with URL
 "   3. when (URL). : Takes ). along with URL
+" function! HandleURL()
+"     let s:url = join(split(matchstr(getline("."), '[a-z]*:\/\/[^ >,;]*'), "#"), "\\#")
+"     echo s:url
+"     if s:url != ""
+"         " silent exec "!xdg-open '".s:url."'"
+"         silent exec "!firefox --new-tab '".s:url."'"
+"         redraw!
+"     else
+"         echo "No URL found in line."
+"     endif
+" endfunction
+
 function! HandleURL()
-    let s:url = join(split(matchstr(getline("."), '[a-z]*:\/\/[^ >,;]*'), "#"), "\\#")
-    echo s:url
-    if s:url != ""
-        " silent exec "!xdg-open '".s:url."'"
-        silent exec "!firefox --new-tab '".s:url."'"
-        redraw!
-    else
-        echo "No URL found in line."
-    endif
+  let s:uri = matchstr(getline("."), '[a-z]*:\/\/[^ >,;()]*')
+  let s:uri = shellescape(s:uri, 1)
+  echom s:uri
+  if s:uri != ""
+    silent exec "!firefox --new-tab '".s:uri."'"
+    :redraw!
+  else
+    echo "No URI found in line."
+  endif
 endfunction
 
 nnoremap gx :call HandleURL()<cr>
@@ -637,6 +735,29 @@ function! Count_Occurence(matchstr)
     endwhile
     echo "Count is " . counter
 endfunction
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" YouCompleteMe Configurations
+" ============================
+
+" Jump to definitions
+nmap <buffer> <silent> <Leader>gd :YcmCompleter GoToDefinition<CR>
+" Show all references
+nmap <buffer> <silent> <Leader>gr :YcmCompleter GoToReferences<CR>
+" Rename the literal
+nmap <buffer> <silent> <Leader>rr :YcmCompleter RefactorRename<SPACE>
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Replace command
+com -range=% -nargs=1 P exe "<line1>,<line2>!".<q-args> |y|sil u|echom @"
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" LLVM IR and related configurations
+" ==================================
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
