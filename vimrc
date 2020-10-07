@@ -1,6 +1,6 @@
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Author: Manas (weirdsmiley) <manas18244@iiitd.ac.in>
-" Last Changed: September 21, 2020
+" Last Changed: October 07, 2020
 "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -354,6 +354,9 @@ autocmd FileType cpp nnoremap ;l :w <bar> !clear && g++ -g % && gdb ./a.out<cr>
 autocmd FileType c nnoremap <Leader>l :w <bar> !clear && gcc -g % && echo "done compiling" && echo "running..." && ./a.out<cr>
 autocmd FileType c nnoremap ;l :w <bar> !clear && gcc -g % && gdb ./a.out<cr>
 
+" Compiler and run Fortran code
+autocmd Filetype fortran nnoremap <Leader>l :w <bar> :!clear && gfortran % && echo "done compiling" && echo "running..." && ./a.out<cr>
+
 " Interpret python code
 autocmd Filetype python nnoremap <Leader>l :w <bar> !clear && python %<cr>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -439,13 +442,18 @@ nnoremap <leader>mb :call MapBuffers()<CR>
 nnoremap tt :vertical terminal<CR>
 
 " Open terminal in a new tab
-nnoremap TT :tab terminal ++close<CR>
+" nnoremap TT :tab terminal ++close<CR>
 
 function! OpenTerminalInNewTab()
-    " TODO: For mapping <F1> to Terminal tab and last tab
+    " For mapping <F1> to Terminal tab and last tab
     " for moving back and forth
-
+    execute "tab terminal ++close"
+    execute "tmap <F1> <C-w>gt"
+    execute "normal! <F1>"
+    execute "nmap <F1> <C-w>gt"
+    execute "normal! <F1>"
 endfunction
+nnoremap TT :call OpenTerminalInNewTab()<CR>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -631,6 +639,9 @@ call plug#begin()
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'stsewd/fzf-checkout.vim'
+
+" For Testing (Nvim-R)
+Plug 'jalvesaq/Nvim-R', {'branch': 'stable'}
 call plug#end()
 
 set rtp+=~/.fzf
