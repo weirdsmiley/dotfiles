@@ -1,6 +1,6 @@
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Author: Manas (weirdsmiley)
-" Last Changed: October 07, 2020
+" Author: Manas (weirdsmiley) <manas18244 at iiitd dot ac dot in>
+" Last Changed: November 02, 2020
 "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -119,6 +119,15 @@ set expandtab
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Hybrid line numbering
 set relativenumber number
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Case matching while searching
+"""""""""""""""""""""""""""""""
+" case-sensitive pattern matching
+set ignorecase
+" override ignorecase if search regex contains mixed-case
+set smartcase
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -405,7 +414,11 @@ augroup END
 " Change size by +10
 nnoremap ]= :res +10<cr>
 " Change size by -10
-map ]- :res -10<cr>
+nnoremap ]- :res -10<cr>
+
+" resize vertically 
+nnoremap [= :vert res +10<cr>
+nnoremap [- :vert res -10<cr>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -428,7 +441,7 @@ function! MapBuffers()
 endfunction
 
 " Power mapping : map buffers to respective function keys
-nnoremap <leader>mb :call MapBuffers()<CR>
+nnoremap <leader>mm :call MapBuffers()<CR>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -454,6 +467,12 @@ function! OpenTerminalInNewTab()
     execute "normal! <F1>"
 endfunction
 nnoremap TT :call OpenTerminalInNewTab()<CR>
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Movements between different tabs made easy
+nnoremap <C-h> :tabprev<CR>
+nnoremap <C-l> :tabnext<CR>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -562,6 +581,12 @@ augroup END
 "         endif
 " endfunction
 " au FileType markdown inoremap <ENTER> <ESC>:call PrependTime('/home/neon/workspace/notes')<cr>A
+"
+" 
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Custom syntax highlighting for ~/workspace/notes/ -- MOVED TO ~/w/notes/ dir.
+" autocmd BufNewFile,BufRead ~/workspace/notes/* source ~/workspace/notes/syntax.vim
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -758,6 +783,14 @@ nmap <buffer> <silent> <Leader>gd :YcmCompleter GoToDefinition<CR>
 nmap <buffer> <silent> <Leader>gr :YcmCompleter GoToReferences<CR>
 " Rename the literal
 nmap <buffer> <silent> <Leader>rr :YcmCompleter RefactorRename<SPACE>
+
+" clangd fully controlling code completion
+" 0 : use clangd's caching and filtering algorithm
+let g:ycm_clangd_uses_ycmd_caching = 0
+
+" Using system-installed clangd, not YCM-bundled
+let g:ycm_clangd_binary_path = exepath("clangd")
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -768,7 +801,21 @@ com -range=% -nargs=1 P exe "<line1>,<line2>!".<q-args> |y|sil u|echom @"
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " LLVM IR and related configurations
 " ==================================
+" TODO:
 
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Local .vimrc(s)
+" ==============
+
+" Vim will also look for a .vimrc in the initiating directory
+set exrc
+
+" Disable :autocmd, shell and write commands
+" (as local .vimrc(s) can have unknown code)
+" NOTE: On Unix this option is only used if .vimrc is not owned by user
+set secure
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
