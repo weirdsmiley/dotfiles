@@ -73,9 +73,50 @@ autocmd FileType help wincmd L
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Vundle Settings and Installations
+" set rtp+=~/.vim/bundle/Vundle.vim
+" call vundle#begin()
+
+" Plugin 'VundleVim/Vundle.vim'
+" Plugin 'itchyny/lightline.vim'
+" Plugin 'ycm-core/YouCompleteMe'
+
+" call vundle#end()
+
+" Vim-plug Settings
+call plug#begin()
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+Plug 'stsewd/fzf-checkout.vim'
+Plug 'ycm-core/YouCompleteMe'
+Plug 'neoclide/coc.nvim', {'branch': 'release', 'for': ['rust']}
+Plug 'ajmwagar/vim-deus'
+Plug 'vim-airline/vim-airline'
+Plug 'tpope/vim-surround'
+Plug 'preservim/nerdtree'
+Plug 'preservim/nerdcommenter'
+Plug 'rust-lang/rust.vim'
+Plug 'lervag/vimtex'
+Plug 'ryanoasis/vim-devicons'
+Plug 'rhysd/vim-llvm'
+Plug 'JuliaEditorSupport/julia-vim'
+Plug 'fatih/vim-go'
+Plug '~/.vim/plugged/vim-math'
+Plug '~/.vim/plugged/para.vim'
+Plug '~/.vim/plugged/vim-draw'
+
+" For Testing (Nvim-R)
+Plug 'jalvesaq/Nvim-R', {'branch': 'stable'}
+call plug#end()
+
+set rtp+=~/.fzf
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " WORK: Add comment; arrange plugins
 " Load plugins here (pathogen or vundle)
-execute pathogen#infect()
+" execute pathogen#infect()
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -96,6 +137,37 @@ set linebreak
 set breakindent
 " Shift wrapped lines by 4 spaces
 set breakindentopt=shift:4
+
+" Remap movements keys when wrapping in on
+" eg. j → gj, k → gk
+" Ack: https://vimtricks.com/p/word-wrapping/
+let s:wrapenabled = 0
+function! ToggleWrap()
+    set wrap nolist     " nolist disables whitespace chars being visible
+    if s:wrapenabled
+        unmap j
+        unmap k
+        unmap 0
+        unmap ^
+        unmap $
+        let s:wrapenabled = 0
+    else
+        nnoremap j gj
+        nnoremap k gk
+        nnoremap 0 g0
+        nnoremap ^ g^
+        nnoremap $ g$
+
+        vnoremap j gj
+        vnoremap k gk
+        vnoremap 0 g0
+        vnoremap ^ g^
+        vnoremap $ g$
+
+        let s:wrapenabled = 1
+    endif
+endfunction
+nnoremap <Leader>s :call ToggleWrap()<CR>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -107,13 +179,18 @@ filetype plugin indent on
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Tab settings
 " Number of spaces <Tab> counts for
-set tabstop=4
+set tabstop=2
 " Count of spaces <Tab> counts for while editing
-set softtabstop=4
+set softtabstop=2
 " Spaces used for every indentation by >> <<
-set shiftwidth=4
+set shiftwidth=2
 " On pressing tab, insert 4 spaces
 set expandtab
+" Round indent to multiple of width
+set shiftround
+
+" Special case for rust files (:meh)
+autocmd FileType rust set tabstop=4 | set softtabstop=4 | set shiftwidth=4
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -135,8 +212,21 @@ set smartcase
 set scrolloff=5
 
 " Smooth scrolling
-map <C-U> <C-Y><C-Y><C-Y><C-Y><C-Y><C-Y><C-Y><C-Y><C-Y><C-Y><C-Y><C-Y>
-map <C-D> <C-E><C-E><C-E><C-E><C-E><C-E><C-E><C-E><C-E><C-E><C-E><C-E>
+" map <C-U> <C-Y><C-Y><C-Y><C-Y><C-Y><C-Y><C-Y><C-Y><C-Y><C-Y><C-Y><C-Y>
+" map <C-D> <C-E><C-E><C-E><C-E><C-E><C-E><C-E><C-E><C-E><C-E><C-E><C-E>
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" copy at least n last messages from :messages
+function! CTCFromMessages(n)
+    " It copies last n messages from :messages to the clipboard ('+' register)
+    " TODO: Do I need last n or just last?
+    execute "redir @+"
+    execute "1message"
+    execute "redir END"
+    silent echo "CTCFromMessages: copied " . a:n . " messages"
+endfunction
+nnoremap CC :call CTCFromMessages(1)<CR>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -155,7 +245,7 @@ set shortmess-=S
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Remove search highlights
-nnoremap <leader><space> :noh<cr>
+nnoremap <silent> <leader><space> :noh<cr>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -166,11 +256,11 @@ set ttyfast
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Remap movement keys when wrapping is on
 
-augroup OnWrapMovements
-	au!
-    autocmd Filetype tex,markdown map j gj
-    autocmd Filetype tex,markdown map k gk
-augroup END
+" augroup OnWrapMovements
+"     au!
+"     autocmd Filetype tex,markdown map j gj
+"     autocmd Filetype tex,markdown map k gk
+" augroup END
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -225,7 +315,8 @@ set showtabline=2
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Character encoding
-set encoding=utf8
+set encoding=utf-8
+set fileencoding=utf-8
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -258,18 +349,6 @@ set fillchars+=vert:┆
 set laststatus=2
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-"set rtp+=~/.vim/bundle/Vundle.vim
-"call vundle#begin()
-
-"Plugin 'itchyny/lightline.vim'
-" NeoBundle 'itchyny/lightline.vim'
-" Plug 'itchyny/lightline.vim'
-"Plugin 'ycm-core/YouCompleteMe'
-
-" All of your Plugins must be added before the following line 
-"call vundle#end()            " required 
-
-
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " NERDTree Configurations
 " =======================
@@ -297,44 +376,6 @@ let NERDTreeShowBookmarks=1
 let NERDTreeHighlightCursorline=1
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Airline configurations
-" ======================
-
-" Define dictionary to store symbols
-if !exists('g:airline_symbols')
-	let g:airline_symbols = {}
-endif
-
-" Status bar color
-let g:airline_theme='dark'
-
-" Add symbols for customization
-let g:airline_left_sep = ''
-let g:airline_left_alt_sep = ''
-let g:airline_right_sep = ''
-let g:airline_right_alt_sep = ''
-let g:airline_detect_modified=1
-let g:airline_detect_paste=1
-let g:airline_detect_crypt=1
-let g:airline_detect_spell=1
-let g:airline_inactive_collapse=1
-let g:airline_inactive_alt_sep=1
-let g:airline_symbols.branch = ''
-let g:airline_symbols.readonly = ''
-let g:airline_symbols.linenr = '☰'
-let g:airline_symbols.maxlinenr = ''
-let g:airline_symbols.dirty='⚡'
-
-" Using powerline symbols
-let g:airline_powerline_fonts = 1
-
-" Few more options
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#ycm#enabled = 1
-let g:airline#extensions#ycm#error_symbol = 'E:'
-let g:airline#extensions#ycm#warning_symbol = 'W:'
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " NERDCommenter configurations
@@ -355,9 +396,18 @@ let g:NERDDefaultAlign = 'left'
 " ============================================
 " SUGGESTION: try doing if binary exists without change then dont compile again
 
+" Opening a popup win for running programs
+" function! TerminalPopupWin()
+"     let s:filename = expand('%')
+"     let s:cmdlist = './a.out'
+"     let buf = term_start(s:cmdlist, #{hidden: 1, term_finish: 'open'})
+"     echom s:cmdlist
+"     let winid = popup_create(buf, #{minwidth: 120, minheight: 26})
+" endfunction
+
 " Compile and run cpp code
-autocmd FileType cpp nnoremap <Leader>l :w <bar> !clear && g++ -g % && echo "done compiling" && echo "running..." && ./a.out<cr>
-autocmd FileType cpp nnoremap ;l :w <bar> !clear && g++ -g % && gdb ./a.out<cr>
+autocmd FileType cpp nnoremap <Leader>l :w <bar> !clear && clang++ -g % && echo "done compiling" && echo "running..." && ./a.out<cr>
+autocmd FileType cpp nnoremap ;l :w <bar> !clear && clang++ -g -fstandalone-debug % && lldb ./a.out<cr>
 
 " Compile and run c code
 autocmd FileType c nnoremap <Leader>l :w <bar> !clear && gcc -g % && echo "done compiling" && echo "running..." && ./a.out<cr>
@@ -451,8 +501,22 @@ nnoremap <leader>mm :call MapBuffers()<CR>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Movements between different tabs made easy
+nnoremap <C-h> :tabprev<CR>
+nnoremap <C-l> :tabnext<CR>
+
+" Inside terminal mode
+tnoremap <C-h> <C-w>:tabprev<CR>
+tnoremap <C-l> <C-w>:tabnext<CR>
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Open terminal vertically in split pane
 nnoremap tt :vertical terminal<CR>
+
+" Setting terminal size to 24x80; prevents terminal resizing if other panes
+" are resized and terminal's data getting lost
+set termwinsize=0*80
 
 " Open terminal in a new tab
 " nnoremap TT :tab terminal ++close<CR>
@@ -461,22 +525,23 @@ function! OpenTerminalInNewTab()
     " For mapping <F1> to Terminal tab and last tab
     " for moving back and forth
     execute "tab terminal ++close"
-    execute "tmap <F1> <C-w>gt"
-    execute "normal! <F1>"
-    execute "nmap <F1> <C-w>gt"
-    execute "normal! <F1>"
+    " execute "tmap <F1> <C-w>gt"
+    set termwinsize=
+    set termwinsize=0*80
+    " Do we need these? vvvvvvvvv
+    " execute "normal! <F1>"
+    " execute "nmap <F1> <C-w>gt"
+    " execute "normal! <F1>"
+    " ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 endfunction
 nnoremap TT :call OpenTerminalInNewTab()<CR>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Movements between different tabs made easy
-nnoremap <C-h> :tabprev<CR>
-nnoremap <C-l> :tabnext<CR>
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Quick open ~/.vimrc
+" Using global marks: Just add a global mark like mV (mark .vimrc) and reach
+" here via 'V
+" Ack: VimTricks:Bookmark frequent locations
 nnoremap <leader>ev :vsp $MYVIMRC<CR>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -534,12 +599,16 @@ function! Skel(which_dir, which_template)
 			silent! execute '0r ~/.vim/templates/skeleton_c.c'
 			5
 		elseif a:which_template ==# 'rust'
-			silent! execute '0r ~/.vim/templates/skeleton_c.c'
+			silent! execute '0r ~/.vim/templates/skeleton_rust.rs'
 			5
+    elseif a:which_template ==# 'java'
+      silent! execute '0r ~/.vim/templates/skeleton_java.java'
+      6
 		endif
 	endif
 endfunction
 
+" FIXME: Major improvements needed!
 augroup Templates
 	au!
 	au BufNewFile *.cpp call Skel('/home/neon/workspace/codechef', 'cpp')
@@ -548,7 +617,8 @@ augroup Templates
 	au BufNewFile *.cpp call Skel('/home/neon/workspace/hashcode', 'cpp')
 	au BufNewFile *.tex call Skel('/home/neon', 'latex')
 	au BufNewFile *.c call Skel('/home/neon', 'c')
-	au BufNewFile *.rs call Skel('/home/neon', 'rs')
+	au BufNewFile *.rs call Skel('/home/neon', 'rust')
+	au BufNewFile *.java call Skel('/home/neon', 'java')
 augroup END
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -591,7 +661,7 @@ augroup END
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Turn off relative numbering when buffer loses focus
-" Ack : https://github.com/jeffkreeftmeijer/vim-numbertoggle
+" Ack: https://github.com/jeffkreeftmeijer/vim-numbertoggle
 augroup numbertoggle
 	au!
 	au BufEnter,FocusGained,WinEnter * if &number | set relativenumber | endif
@@ -604,9 +674,9 @@ augroup END
 augroup Overflow80
 	au!
 	" Set border when entering insert mode
-	au InsertEnter *.txt,*.md,*.c,*.cpp,*.py,*.java,*.rs,*.sh set colorcolumn=80
+	au InsertEnter *.txt,*.md,*.c,*.cpp,*.py,*.java,*.rs,*.sh set colorcolumn=80 | set textwidth=80
 	" Unset border before leaving insert mode
-	au InsertLeave *.c,*.cpp,*.py,*.java,*.rs,*.sh set colorcolumn=
+	au InsertLeave *.txt,*.md,*.c,*.cpp,*.py,*.java,*.rs,*.sh set colorcolumn=
 augroup END
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -619,6 +689,14 @@ nnoremap <Leader>. <C-^>
 " Add '=' or '-' below the title line in insert mode
 au FileType text,markdown inoremap <buffer> === <ESC>kyypV:s/./=/g<cr>:noh<cr>o
 au FileType text,markdown inoremap <buffer> --- <ESC>kyypV:s/./-/g<cr>:noh<cr>o
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" When using codeblocks inside a markdown file, use the syntax coloring for
+" that particular language
+let g:markdown_fenced_languages = ['c', 'python', 'rust', 'java',
+      \ 'javascript', 'js=javascript', 'xml', 'html', 'css', 'ruby', 'erlang',
+      \ 'vim']
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -659,18 +737,6 @@ map <leader>pc :call PlayChess()<cr>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " FZF Configurations
 " ==================
-" Installation
-call plug#begin()
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
-Plug 'stsewd/fzf-checkout.vim'
-
-" For Testing (Nvim-R)
-Plug 'jalvesaq/Nvim-R', {'branch': 'stable'}
-call plug#end()
-
-set rtp+=~/.fzf
-
 " Key mappings
 " ============
 
@@ -704,7 +770,7 @@ nnoremap <LocalLeader>g :GutentagsUpdate<CR>
 nnoremap <LocalLeader>g :GutentagsUpdate!<CR>
 
 " Enable gutentags
-let g:gutentags_enabled = 1
+let g:gutentags_enabled = 0
 
 " For debugging purposes (:GutentagsToggleTrace)
 let g:gutentags_define_advanced_commands = 1
@@ -737,11 +803,41 @@ function! HandleURL()
     silent exec "!firefox --new-tab '".s:uri."'"
     :redraw!
   else
-    echo "No URI found in line."
+    echo "No URL found in line."
   endif
 endfunction
 
+" Scrape the visual-selected text in the buffer
+" Return as a string
+" Ack: https://stackoverflow.com/a/6271254/11038150
+function! s:get_visual_selection()
+    " Why is this not a built-in Vim script function?!
+    let [line_start, column_start] = getpos("'<")[1:2]
+    let [line_end, column_end] = getpos("'>")[1:2]
+    let lines = getline(line_start, line_end)
+    if len(lines) == 0
+        return ''
+    endif
+    let lines[-1] = lines[-1][: column_end - (&selection == 'inclusive' ? 1 : 2)]
+    let lines[0] = lines[0][column_start - 1:]
+    return join(lines, "\n")
+endfunction
+
+" Search the visually-selected text in a new-tab of firefox via duckduckgo
+function! VizSearchFF()
+    let s:keyword = s:get_visual_selection()
+
+    if s:keyword !~# "^https://"
+        silent exec "!firefox --new-tab 'https://duckduckgo.com/?q=".s:keyword."'"
+        redraw!
+    else
+        call HandleURL()
+        echo "Via VIZ"
+    endif
+endfunction
+
 nnoremap gx :call HandleURL()<cr>
+vnoremap gx :call VizSearchFF()<cr>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -777,20 +873,93 @@ endfunction
 " YouCompleteMe Configurations
 " ============================
 
+" Disable YCM for rust filetypes (using CoC)
+let g:ycm_filetype_blacklist = {'rust': 1}
+
 " Jump to definitions
-nmap <buffer> <silent> <Leader>gd :YcmCompleter GoToDefinition<CR>
+nnoremap <silent> gd :YcmCompleter GoToDefinition<CR>
+" Jump to declarations
+nnoremap <silent> <LocalLeader>gd :YcmCompleter GoToDeclaration<CR>
 " Show all references
-nmap <buffer> <silent> <Leader>gr :YcmCompleter GoToReferences<CR>
+nnoremap <silent> gr :YcmCompleter GoToReferences<CR>
 " Rename the literal
-nmap <buffer> <silent> <Leader>rr :YcmCompleter RefactorRename<SPACE>
+nnoremap <silent> <LocalLeader>rr :YcmCompleter RefactorRename<SPACE>
+
+" Disable limit for maximum diagnostics to show
+let g:ycm_max_diagnostics_to_display = 20
 
 " clangd fully controlling code completion
 " 0 : use clangd's caching and filtering algorithm
+" TODO: Check for diffs
 let g:ycm_clangd_uses_ycmd_caching = 0
 
 " Using system-installed clangd, not YCM-bundled
 let g:ycm_clangd_binary_path = exepath("clangd")
 
+" Disable clangd for larger files
+let g:disable_for_files_larger_than_kb = 2000
+
+" Open GoTo* files into different buffers
+let g:ycm_goto_buffer_command = 'same-buffer'
+
+" Locate the global extra configurations files
+" It will allow Ycm to pass LSP arguments to appropriate servers.
+let g:ycm_global_ycm_extra_conf = '/home/neon/.config/youcompleteme-conf/ycm_extra_conf.py'
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" CoC Configurations
+""""""""""""""""""""
+" Separated all those configurations to not let it interfere with Ycm
+autocmd Filetype rust runtime coc-conf.vim
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Airline configurations
+" ======================
+
+" Define dictionary to store symbols
+if !exists('g:airline_symbols')
+	let g:airline_symbols = {}
+endif
+
+" Status bar color
+let g:airline_theme='dark'
+
+" Add symbols for customization
+let g:airline_left_sep = ''
+let g:airline_left_alt_sep = ''
+let g:airline_right_sep = ''
+let g:airline_right_alt_sep = ''
+let g:airline_detect_modified=1
+let g:airline_detect_paste=1
+let g:airline_detect_crypt=1
+let g:airline_detect_spell=1
+let g:airline_inactive_collapse=1
+let g:airline_inactive_alt_sep=1
+let g:airline_symbols.branch = ''
+let g:airline_symbols.readonly = ''
+let g:airline_symbols.linenr = '☰'
+let g:airline_symbols.maxlinenr = ''
+let g:airline_symbols.dirty='⚡'
+
+" Using powerline symbols
+let g:airline_powerline_fonts = 1
+
+" Few more options
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#ycm#enabled = 1
+let g:airline#extensions#ycm#error_symbol = 'E:'
+let g:airline#extensions#ycm#warning_symbol = 'W:'
+let g:airline#extensions#tabline#formatter = 'default'
+
+" let g:airline#extensions#coc#enabled = 0
+" let airline#extensions#coc#error_symbol = 'Error:'
+" let airline#extensions#coc#warning_symbol = 'Warning:'
+" let airline#extensions#coc#stl_format_err = '%E{[%e(#%fe)]}'
+" let airline#extensions#coc#stl_format_warn = '%W{[%w(#%fw)]}'
+
+let g:airline#extensions#lsp#progress_skip_time = 0
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -806,16 +975,25 @@ com -range=% -nargs=1 P exe "<line1>,<line2>!".<q-args> |y|sil u|echom @"
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Vim-Go settings
+" """""""""""""""
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Local .vimrc(s)
 " ==============
 
-" Vim will also look for a .vimrc in the initiating directory
-set exrc
+" Whitelisting specific directories which can read local .vimrc(s)
+if getcwd() =~# '^\(/home/neon/workspace/notes\)'
+    " Vim will also look for a .vimrc in the initiating directory
+    set exrc
 
-" Disable :autocmd, shell and write commands
-" (as local .vimrc(s) can have unknown code)
-" NOTE: On Unix this option is only used if .vimrc is not owned by user
-set secure
+    " Disable :autocmd, shell and write commands
+    " (as local .vimrc(s) can have unknown code)
+    " NOTE: On Unix this option is only used if .vimrc is not owned by user
+    set secure
+endif
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
