@@ -1,7 +1,6 @@
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Author: Manas (weirdsmiley) <manas18244 at iiitd dot ac dot in>
-" Last Changed: November 02, 2020
-"
+" Last Changed: January 13, 2022
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -73,37 +72,29 @@ autocmd FileType help wincmd L
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Vundle Settings and Installations
-" set rtp+=~/.vim/bundle/Vundle.vim
-" call vundle#begin()
-
-" Plugin 'VundleVim/Vundle.vim'
-" Plugin 'itchyny/lightline.vim'
-" Plugin 'ycm-core/YouCompleteMe'
-
-" call vundle#end()
-
 " Vim-plug Settings
 call plug#begin()
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
-Plug 'stsewd/fzf-checkout.vim'
-Plug 'ycm-core/YouCompleteMe'
-Plug 'neoclide/coc.nvim', {'branch': 'release', 'for': ['rust']}
-Plug 'ajmwagar/vim-deus'
-Plug 'vim-airline/vim-airline'
-Plug 'tpope/vim-surround'
-Plug 'preservim/nerdtree'
-Plug 'preservim/nerdcommenter'
-Plug 'rust-lang/rust.vim'
-Plug 'lervag/vimtex'
-Plug 'ryanoasis/vim-devicons'
-Plug 'rhysd/vim-llvm'
 Plug 'JuliaEditorSupport/julia-vim'
 Plug 'fatih/vim-go'
-Plug '~/.vim/plugged/vim-math'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+Plug 'lervag/vimtex'
+Plug 'mbbill/undotree'
+Plug 'ajmwagar/vim-deus'
+Plug 'morhetz/gruvbox'
+Plug 'neoclide/coc.nvim', {'branch': 'release', 'for': ['rust', 'erlang']}
+Plug 'preservim/nerdcommenter'
+Plug 'preservim/nerdtree'
+Plug 'rhysd/vim-llvm'
+Plug 'rust-lang/rust.vim'
+Plug 'ryanoasis/vim-devicons'
+Plug 'stsewd/fzf-checkout.vim'
+Plug 'tpope/vim-surround'
+Plug 'vim-airline/vim-airline'
+Plug 'ycm-core/YouCompleteMe'
 Plug '~/.vim/plugged/para.vim'
 Plug '~/.vim/plugged/vim-draw'
+Plug '~/.vim/plugged/vim-math'
 
 " For Testing (Nvim-R)
 Plug 'jalvesaq/Nvim-R', {'branch': 'stable'}
@@ -191,6 +182,11 @@ set shiftround
 
 " Special case for rust files (:meh)
 autocmd FileType rust set tabstop=4 | set softtabstop=4 | set shiftwidth=4
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Auto read when a file is changed outside of Vim
+set autoread
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -330,18 +326,43 @@ endif
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Theme settings
-" set termguicolors
 " Colorscheme
 colorscheme deus
 " Set dark mode
 set background=dark
 " Status line color
-
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Characters to fill the statuslines and vertical separators
 set fillchars+=vert:┆
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Normally, Vim destroys tree of undos when a buffer is deleted.
+" Persistent undo: enable Vim to keep undo changes for all files even
+" after unloading a buffer.
+set undofile
+set undolevels=5000
+set undodir=~/.vim/undodir/
+" Ack: Lifepillar
+command! -nargs=0 CleanUpUndoFiles !find ~/.vim/undodir -type f -mtime 100 -delete
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Undotree settings
+" =================
+nnoremap <F5> :UndotreeToggle<cr>
+
+if !exists('g:undotree_WindowLayout')
+    let g:undotree_WindowLayout = 2
+endif
+
+let g:undotree_SetFocusWhenToggle = 1
+
+let g:undotree_TreeNodeShape = '≫'
+let g:undotree_TreeVertShape = '│'
+let g:undotree_HighlightChangedText = 1
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -579,8 +600,6 @@ let g:tex_flavor = 'latex'
 " Autocompletion
 let g:vimtex_complete_enabled = 1
 
-
-
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -617,7 +636,7 @@ augroup Templates
 	au BufNewFile *.cpp call Skel('/home/neon/workspace/hashcode', 'cpp')
 	au BufNewFile *.tex call Skel('/home/neon', 'latex')
 	au BufNewFile *.c call Skel('/home/neon', 'c')
-	au BufNewFile *.rs call Skel('/home/neon', 'rust')
+	au BufNewFile *.rs call Skel('/home/neon/workspace/codeforces', 'rust')
 	au BufNewFile *.java call Skel('/home/neon', 'java')
 augroup END
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -674,9 +693,9 @@ augroup END
 augroup Overflow80
 	au!
 	" Set border when entering insert mode
-	au InsertEnter *.txt,*.md,*.c,*.cpp,*.py,*.java,*.rs,*.sh set colorcolumn=80 | set textwidth=80
+	au InsertEnter *.txt,*.md,*.c,*.cpp,*.py,*.java,*.scala,*.rs,*.sh set colorcolumn=80 | set textwidth=80
 	" Unset border before leaving insert mode
-	au InsertLeave *.txt,*.md,*.c,*.cpp,*.py,*.java,*.rs,*.sh set colorcolumn=
+	au InsertLeave *.txt,*.md,*.c,*.cpp,*.py,*.java,*.scala,*.rs,*.sh set colorcolumn=
 augroup END
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -695,7 +714,7 @@ au FileType text,markdown inoremap <buffer> --- <ESC>kyypV:s/./-/g<cr>:noh<cr>o
 " When using codeblocks inside a markdown file, use the syntax coloring for
 " that particular language
 let g:markdown_fenced_languages = ['c', 'python', 'rust', 'java',
-      \ 'javascript', 'js=javascript', 'xml', 'html', 'css', 'ruby', 'erlang',
+      \ 'javascript', 'js=javascript', 'xml', 'html', 'css', 'ruby', 'erlang', 'scala',
       \ 'vim']
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -874,7 +893,7 @@ endfunction
 " ============================
 
 " Disable YCM for rust filetypes (using CoC)
-let g:ycm_filetype_blacklist = {'rust': 1}
+let g:ycm_filetype_blacklist = {'rust': 1, 'erlang': 1}
 
 " Jump to definitions
 nnoremap <silent> gd :YcmCompleter GoToDefinition<CR>
@@ -912,7 +931,7 @@ let g:ycm_global_ycm_extra_conf = '/home/neon/.config/youcompleteme-conf/ycm_ext
 " CoC Configurations
 """"""""""""""""""""
 " Separated all those configurations to not let it interfere with Ycm
-autocmd Filetype rust runtime coc-conf.vim
+autocmd Filetype rust,erlang runtime coc-conf.vim
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Airline configurations
