@@ -1,5 +1,5 @@
-# dotfiles\_and\_scripts
-My personal dotfiles and scripts (will be kept updated in future)
+# dotfiles
+My personal dotfiles and scripts
 
 ### Images
 
