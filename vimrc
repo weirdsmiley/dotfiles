@@ -1,6 +1,7 @@
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Author: Manas (weirdsmiley) <manas18244 at iiitd dot ac dot in>
-" Last Changed: January 13, 2022
+" Last Changed: June 23, 2022
+"
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -81,8 +82,9 @@ Plug 'junegunn/fzf.vim'
 Plug 'lervag/vimtex'
 Plug 'mbbill/undotree'
 Plug 'ajmwagar/vim-deus'
+Plug 'ludovicchabant/vim-gutentags'
 Plug 'morhetz/gruvbox'
-Plug 'neoclide/coc.nvim', {'branch': 'release', 'for': ['rust', 'erlang']}
+Plug 'neoclide/coc.nvim', {'branch': 'release', 'for': ['rust', 'erlang'], 'do': 'yarn install --frozen-lockfile'}
 Plug 'preservim/nerdcommenter'
 Plug 'preservim/nerdtree'
 Plug 'rhysd/vim-llvm'
@@ -92,9 +94,13 @@ Plug 'stsewd/fzf-checkout.vim'
 Plug 'tpope/vim-surround'
 Plug 'vim-airline/vim-airline'
 Plug 'ycm-core/YouCompleteMe'
+Plug 'tomlion/vim-solidity'
+Plug 'felipec/notmuch-vim'
 Plug '~/.vim/plugged/para.vim'
 Plug '~/.vim/plugged/vim-draw'
 Plug '~/.vim/plugged/vim-math'
+Plug '~/.vim/plugged/vim-schedule-highlight'
+Plug '~/.vim/plugged/example-plugin'
 
 " For Testing (Nvim-R)
 Plug 'jalvesaq/Nvim-R', {'branch': 'stable'}
@@ -327,7 +333,7 @@ endif
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Theme settings
 " Colorscheme
-colorscheme deus
+colorscheme gruvbox
 " Set dark mode
 set background=dark
 " Status line color
@@ -428,7 +434,7 @@ let g:NERDDefaultAlign = 'left'
 
 " Compile and run cpp code
 autocmd FileType cpp nnoremap <Leader>l :w <bar> !clear && clang++ -g % && echo "done compiling" && echo "running..." && ./a.out<cr>
-autocmd FileType cpp nnoremap ;l :w <bar> !clear && clang++ -g -fstandalone-debug % && lldb ./a.out<cr>
+autocmd FileType cpp nnoremap ;l :w <bar> !clear && clang++ -g -fstandalone-debug % && gdb ./a.out<cr>
 
 " Compile and run c code
 autocmd FileType c nnoremap <Leader>l :w <bar> !clear && gcc -g % && echo "done compiling" && echo "running..." && ./a.out<cr>
@@ -632,6 +638,7 @@ augroup Templates
 	au!
 	au BufNewFile *.cpp call Skel('/home/neon/workspace/codechef', 'cpp')
 	au BufNewFile *.cpp call Skel('/home/neon/workspace/codeforces', 'cpp')
+	au BufNewFile *.cpp call Skel('/home/neon/workspace/codejam', 'cpp')
 	au BufNewFile *.cpp call Skel('/home/neon/workspace/foobarcp', 'cpp')
 	au BufNewFile *.cpp call Skel('/home/neon/workspace/hashcode', 'cpp')
 	au BufNewFile *.tex call Skel('/home/neon', 'latex')
@@ -786,7 +793,7 @@ let $FZF_DEFAULT_OPTS='--reverse'
 " Force update current tag file with current buffer
 nnoremap <LocalLeader>g :GutentagsUpdate<CR>
 " Update current tag file for whole project
-nnoremap <LocalLeader>g :GutentagsUpdate!<CR>
+" nnoremap <LocalLeader>g :GutentagsUpdate!<CR>
 
 " Enable gutentags
 let g:gutentags_enabled = 0
@@ -847,7 +854,7 @@ function! VizSearchFF()
     let s:keyword = s:get_visual_selection()
 
     if s:keyword !~# "^https://"
-        silent exec "!firefox --new-tab 'https://duckduckgo.com/?q=".s:keyword."'"
+        silent exec "!firefox --new-tab 'https://www.google.com/search?q=".s:keyword."'"
         redraw!
     else
         call HandleURL()
@@ -1014,6 +1021,16 @@ if getcwd() =~# '^\(/home/neon/workspace/notes\)'
     set secure
 endif
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" NotMuch configuration
+" =====================
+" let g:notmuch_custom_search_maps = {
+"   \ 't':		'search_tag("+to-do -inbox")',
+"   \ }
+
+" let g:notmuch_custom_show_maps = {
+"   \ 't':		'show_tag("+to-do -inbox")',
+"   \ }
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Don't show current mode (Airline does that)
